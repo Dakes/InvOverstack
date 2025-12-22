@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "invoverstack",
+	"version": "${version}",
+	"name": "InvOverstack",
+	"description": "Increase stack sizes ONLY in player inventory with automatic split on container transfer. Server-side with optional client enhancements.",
+	"authors": [
+		"Dakes"
+	],
+	"contact": {
+		"homepage": "https://github.com/dakes/InvOverstack",
+		"sources": "https://github.com/dakes/InvOverstack"
+	},
+	"license": "MIT",
+	"icon": "assets/invoverstack/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.fabricmc.dakes.invoverstack.InvOverstackMod"
+		],
+		"client": [
+			"net.fabricmc.dakes.invoverstack.InvOverstackClient"
+		]
+	},
+	"mixins": [
+		"invoverstack.mixins.json",
+		{
+			"config": "invoverstack.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.18.2",
+		"minecraft": "~1.21",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
