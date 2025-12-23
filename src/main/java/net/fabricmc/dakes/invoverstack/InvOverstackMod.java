@@ -20,8 +20,12 @@ public class InvOverstackMod implements ModInitializer {
 
 		// Phase 2: Load configuration
 		config = ConfigManager.loadConfig();
-		LOGGER.info("Configuration loaded - Default stack size: {}, Max allowed: {}",
-				config.defaultMaxStackSize, config.maxAllowedStackSize);
+		LOGGER.info("Configuration loaded - Default stack size: {}, Max allowed: {}, Debug mode: {}",
+				config.defaultMaxStackSize, config.maxAllowedStackSize, config.debugMode);
+
+		if (config.debugMode) {
+			LOGGER.warn("DEBUG MODE ENABLED - Verbose logging active!");
+		}
 
 		// Phase 2: Register commands
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {

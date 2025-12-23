@@ -1,5 +1,6 @@
 package net.fabricmc.dakes.invoverstack.mixin;
 
+import net.fabricmc.dakes.invoverstack.InvOverstackMod;
 import net.fabricmc.dakes.invoverstack.util.StackContext;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -28,6 +29,11 @@ public abstract class SlotMixin {
             Slot self = (Slot) (Object) this;
             ItemStack currentStack = self.getStack();
             int effectiveMax = StackContext.getEffectiveMaxStackSize(currentStack, this.inventory);
+
+            if (InvOverstackMod.getConfig() != null && InvOverstackMod.getConfig().debugMode) {
+                InvOverstackMod.LOGGER.info("[SlotMixin] getMaxItemCount() -> {}", effectiveMax);
+            }
+
             cir.setReturnValue(effectiveMax);
         } catch (Exception e) {
             // Graceful degradation
@@ -39,6 +45,11 @@ public abstract class SlotMixin {
     private void onGetMaxItemCountForStack(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
         try {
             int effectiveMax = StackContext.getEffectiveMaxStackSize(stack, this.inventory);
+
+            if (InvOverstackMod.getConfig() != null && InvOverstackMod.getConfig().debugMode) {
+                InvOverstackMod.LOGGER.info("[SlotMixin] getMaxItemCount(stack) -> {}", effectiveMax);
+            }
+
             cir.setReturnValue(effectiveMax);
         } catch (Exception e) {
             // Graceful degradation

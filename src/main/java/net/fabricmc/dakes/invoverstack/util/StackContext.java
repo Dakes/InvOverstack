@@ -89,7 +89,13 @@ public class StackContext {
 
         // If we have an inventory context, check if it's a player inventory
         if (inventory != null) {
-            if (isPlayerInventory(inventory)) {
+            boolean isPlayerInv = isPlayerInventory(inventory);
+            if (config.debugMode) {
+                InvOverstackMod.LOGGER.info("[StackContext] getEffectiveMaxStackSize: item={}, inventory={}, isPlayerInv={}",
+                    itemIdString, inventory.getClass().getSimpleName(), isPlayerInv);
+            }
+
+            if (isPlayerInv) {
                 // Player inventory - use configured stack size
                 int configuredSize = config.getStackSizeForItem(itemIdString);
 
@@ -98,21 +104,34 @@ public class StackContext {
                     return vanillaMax;
                 }
 
+                if (config.debugMode) {
+                    InvOverstackMod.LOGGER.info("[StackContext]   -> Returning configured size: {}", configuredSize);
+                }
                 return configuredSize;
             } else {
                 // Container inventory - use vanilla max
+                if (config.debugMode) {
+                    InvOverstackMod.LOGGER.info("[StackContext]   -> Returning vanilla max (container): {}", vanillaMax);
+                }
                 return vanillaMax;
             }
         }
 
         // No inventory context - assume player inventory for now
         // This handles cases like item pickup, crafting, etc.
+        if (config.debugMode) {
+            InvOverstackMod.LOGGER.info("[StackContext] getEffectiveMaxStackSize: item={}, inventory=NULL (assuming player context)", itemIdString);
+        }
+
         int configuredSize = config.getStackSizeForItem(itemIdString);
 
         if (configuredSize == -1) {
             return vanillaMax;
         }
 
+        if (config.debugMode) {
+            InvOverstackMod.LOGGER.info("[StackContext]   -> Returning configured size (no context): {}", configuredSize);
+        }
         return configuredSize;
     }
 

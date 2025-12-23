@@ -13,6 +13,7 @@ public class ModConfig {
     public Set<String> enabledItemCategories = new HashSet<>();
     public Set<String> itemBlacklist = new HashSet<>();
     public boolean autoNormalize = false;
+    public boolean debugMode = false;
 
     public ModConfig() {
         initializeDefaultBlacklist();

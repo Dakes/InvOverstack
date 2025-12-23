@@ -30,8 +30,14 @@ public abstract class ItemStackMixin {
         try {
             ItemStack self = (ItemStack) (Object) this;
             int effectiveMax = StackContext.getEffectiveMaxStackSize(self);
+            int vanillaMax = self.getItem().getMaxCount();
 
-            if (effectiveMax != self.getItem().getMaxCount()) {
+            if (InvOverstackMod.getConfig() != null && InvOverstackMod.getConfig().debugMode) {
+                InvOverstackMod.LOGGER.info("[ItemStackMixin] getMaxCount() for {}: vanilla={}, effective={}",
+                    self.getItem(), vanillaMax, effectiveMax);
+            }
+
+            if (effectiveMax != vanillaMax) {
                 cir.setReturnValue(effectiveMax);
             }
         } catch (Exception e) {

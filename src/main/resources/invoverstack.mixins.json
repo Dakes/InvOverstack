@@ -3,6 +3,9 @@
 	"package": "net.fabricmc.dakes.invoverstack.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
+		"CrafterBlockEntityMixin",
+		"CrafterBlockMixin",
+		"HopperTransferMixin",
 		"ItemStackMixin",
 		"PlayerInventoryMixin",
 		"SlotMixin"
