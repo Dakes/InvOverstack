@@ -22,6 +22,9 @@
 
             # Development tools
             git
+            libglvnd
+            which
+            zenity
           ];
 
           shellHook = ''
@@ -36,6 +39,9 @@
 
             # Set JAVA_HOME for Gradle
             export JAVA_HOME="${pkgs.jdk21}"
+
+            export LIBGL_DRIVERS_PATH=/run/opengl-driver/lib/dri
+            export LD_LIBRARY_PATH="${pkgs.libglvnd}/lib:/run/opengl-driver/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
             # Ensure gradlew is executable
             if [ -f ./gradlew ]; then

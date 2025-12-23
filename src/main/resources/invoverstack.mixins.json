@@ -3,6 +3,9 @@
 	"package": "net.fabricmc.dakes.invoverstack.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
+		"ItemStackMixin",
+		"PlayerInventoryMixin",
+		"SlotMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

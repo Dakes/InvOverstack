@@ -56,10 +56,6 @@ See [TODO.md](TODO.md) for full implementation roadmap.
 - **Fabric API:** 0.139.4+1.21.11
 - **Java:** 21
 
-## License
-
-MIT License - See [LICENSE](LICENSE) file for details
-
 ## Author
 
 Dakes - [GitHub](https://github.com/dakes)
