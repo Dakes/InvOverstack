@@ -3,6 +3,7 @@
 	"package": "net.fabricmc.dakes.invoverstack.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
+		"DrawContextMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
