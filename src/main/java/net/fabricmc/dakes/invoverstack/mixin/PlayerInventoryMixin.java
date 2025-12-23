@@ -6,31 +6,12 @@ import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-/**
- * Mixin for PlayerInventory to fix auto-pickup behavior.
- * <p>
- * This mixin overwrites methods in PlayerInventory to use our configured stack sizes.
- * </p>
- *
- * <h2>The Pickup Problem</h2>
- * <ul>
- *   <li>PlayerInventory.canStackAddMore() calls this.getMaxCount(stack)</li>
- *   <li>Inventory.getMaxCount() returns Math.min(getMaxCountPerStack(), stack.getMaxCount())</li>
- *   <li>getMaxCountPerStack() returns hardcoded 99</li>
- *   <li>So even with our mixin making stack.getMaxCount() return 1024, Math.min(99, 1024) = 99</li>
- * </ul>
- *
- * <h2>The Solution</h2>
- * <p>
- * Overwrite canStackAddMore to use our configured values directly.
- * </p>
- */
 @Mixin(PlayerInventory.class)
 public abstract class PlayerInventoryMixin {
 
     /**
      * @author InvOverstack
-     * @reason Fix stack size check to use configured limits instead of vanilla 99
+     * @reason Use configured stack limits for auto-pickup
      */
     @Overwrite
     private boolean canStackAddMore(ItemStack existingStack, ItemStack stack) {
@@ -45,7 +26,7 @@ public abstract class PlayerInventoryMixin {
 
     /**
      * @author InvOverstack
-     * @reason Fix stack size limit in addStack to use configured limits
+     * @reason Use configured stack limits when adding to slots
      */
     @Overwrite
     private int addStack(int slot, ItemStack stack) {
