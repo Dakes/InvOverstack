@@ -6,8 +6,10 @@
 		"CrafterBlockEntityMixin",
 		"CrafterBlockMixin",
 		"HopperTransferMixin",
+		"InventoryMixin",
 		"ItemStackMixin",
 		"PlayerInventoryMixin",
+		"ScreenHandlerMixin",
 		"SlotMixin"
 	],
 	"injectors": {
