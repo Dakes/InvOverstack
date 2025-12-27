@@ -4,15 +4,15 @@
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"CrafterBlockEntityMixin",
-		"CrafterBlockMixin",
+		"HopperHelperMixin",
 		"HopperTransferMixin",
-		"InventoryMixin",
+		"ItemInteractionHelperMixin",
 		"ItemStackMixin",
 		"PlayerInventoryMixin",
 		"ScreenHandlerMixin",
 		"SlotMixin"
 	],
 	"injectors": {
-		"defaultRequire": 1
+		"defaultRequire": 0
 	}
 }

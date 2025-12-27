@@ -1,8 +1,9 @@
-DEVELOPMENT.md
-TODO.md
-CLAUDE.md
+*.md
+*.txt
+!README.md
 tmp/
-net/
+/net/
+*repomix*
 
 # gradle
 

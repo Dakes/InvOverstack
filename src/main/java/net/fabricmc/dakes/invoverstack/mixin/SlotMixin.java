@@ -1,6 +1,7 @@
 package net.fabricmc.dakes.invoverstack.mixin;
 
 import net.fabricmc.dakes.invoverstack.InvOverstackMod;
+import net.fabricmc.dakes.invoverstack.util.DebugLogger;
 import net.fabricmc.dakes.invoverstack.util.StackContext;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -30,9 +31,11 @@ public abstract class SlotMixin {
             ItemStack currentStack = self.getStack();
             int effectiveMax = StackContext.getEffectiveMaxStackSize(currentStack, this.inventory);
 
-            if (InvOverstackMod.getConfig() != null && InvOverstackMod.getConfig().debugMode) {
-                InvOverstackMod.LOGGER.info("[SlotMixin] getMaxItemCount() -> {}", effectiveMax);
-            }
+            DebugLogger.debug("SlotMixin.getMaxItemCount(): item=%s, inventory=%s, isPlayerInv=%b, maxStack=%d",
+                    currentStack.isEmpty() ? "EMPTY" : currentStack.getItem().toString(),
+                    this.inventory.getClass().getSimpleName(),
+                    StackContext.isPlayerInventory(this.inventory),
+                    effectiveMax);
 
             cir.setReturnValue(effectiveMax);
         } catch (Exception e) {
@@ -46,9 +49,11 @@ public abstract class SlotMixin {
         try {
             int effectiveMax = StackContext.getEffectiveMaxStackSize(stack, this.inventory);
 
-            if (InvOverstackMod.getConfig() != null && InvOverstackMod.getConfig().debugMode) {
-                InvOverstackMod.LOGGER.info("[SlotMixin] getMaxItemCount(stack) -> {}", effectiveMax);
-            }
+            DebugLogger.debug("SlotMixin.getMaxItemCount(stack): item=%s, inventory=%s, isPlayerInv=%b, maxStack=%d",
+                    stack.isEmpty() ? "EMPTY" : stack.getItem().toString(),
+                    this.inventory.getClass().getSimpleName(),
+                    StackContext.isPlayerInventory(this.inventory),
+                    effectiveMax);
 
             cir.setReturnValue(effectiveMax);
         } catch (Exception e) {

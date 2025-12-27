@@ -14,6 +14,7 @@ public class ModConfig {
     public Set<String> itemBlacklist = new HashSet<>();
     public boolean autoNormalize = false;
     public boolean debugMode = false;
+    public boolean disableEasyShulkerBoxes = true;  // Disabled by default to prevent item voiding
 
     public ModConfig() {
         initializeDefaultBlacklist();

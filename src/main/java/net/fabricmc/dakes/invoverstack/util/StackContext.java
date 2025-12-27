@@ -90,10 +90,8 @@ public class StackContext {
         // If we have an inventory context, check if it's a player inventory
         if (inventory != null) {
             boolean isPlayerInv = isPlayerInventory(inventory);
-            if (config.debugMode) {
-                InvOverstackMod.LOGGER.info("[StackContext] getEffectiveMaxStackSize: item={}, inventory={}, isPlayerInv={}",
+            DebugLogger.debug("[StackContext] getEffectiveMaxStackSize: item=%s, inventory=%s, isPlayerInv=%b",
                     itemIdString, inventory.getClass().getSimpleName(), isPlayerInv);
-            }
 
             if (isPlayerInv) {
                 // Player inventory - use configured stack size
@@ -104,34 +102,26 @@ public class StackContext {
                     return vanillaMax;
                 }
 
-                if (config.debugMode) {
-                    InvOverstackMod.LOGGER.info("[StackContext]   -> Returning configured size: {}", configuredSize);
-                }
+                DebugLogger.debug("[StackContext]   -> Returning configured size: %d", configuredSize);
                 return configuredSize;
             } else {
                 // Container inventory - use vanilla max
-                if (config.debugMode) {
-                    InvOverstackMod.LOGGER.info("[StackContext]   -> Returning vanilla max (container): {}", vanillaMax);
-                }
+                DebugLogger.debug("[StackContext]   -> Returning vanilla max (container): %d", vanillaMax);
                 return vanillaMax;
             }
         }
 
-        // No inventory context - assume player inventory for now
-        // This handles cases like item pickup, crafting, etc.
-        if (config.debugMode) {
-            InvOverstackMod.LOGGER.info("[StackContext] getEffectiveMaxStackSize: item={}, inventory=NULL (assuming player context)", itemIdString);
-        }
+        // No inventory context - assume player inventory for item pickup, crafting, etc.
+        // HopperTransferMixin ensures hoppers provide inventory context
+        // ShulkerBoxInventoryMixin ensures shulker boxes report correct max
+        DebugLogger.debug("[StackContext] getEffectiveMaxStackSize: item=%s, inventory=NULL (assuming player context)", itemIdString);
 
         int configuredSize = config.getStackSizeForItem(itemIdString);
-
         if (configuredSize == -1) {
             return vanillaMax;
         }
 
-        if (config.debugMode) {
-            InvOverstackMod.LOGGER.info("[StackContext]   -> Returning configured size (no context): {}", configuredSize);
-        }
+        DebugLogger.debug("[StackContext]   -> Returning configured size (no context): %d", configuredSize);
         return configuredSize;
     }
 
