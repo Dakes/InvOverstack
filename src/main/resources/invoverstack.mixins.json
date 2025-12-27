@@ -6,6 +6,7 @@
 		"CrafterBlockEntityMixin",
 		"HopperHelperMixin",
 		"HopperTransferMixin",
+		"ItemEntityMixin",
 		"ItemInteractionHelperMixin",
 		"ItemStackMixin",
 		"PlayerInventoryMixin",
