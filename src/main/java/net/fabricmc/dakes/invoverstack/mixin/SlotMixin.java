@@ -1,7 +1,5 @@
 package net.fabricmc.dakes.invoverstack.mixin;
 
-import net.fabricmc.dakes.invoverstack.InvOverstackMod;
-import net.fabricmc.dakes.invoverstack.util.DebugLogger;
 import net.fabricmc.dakes.invoverstack.util.StackContext;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -24,37 +22,25 @@ public abstract class SlotMixin {
     @Final
     public Inventory inventory;
 
+    // Called hundreds of times per tick - must be fast, no logging
     @Inject(method = "getMaxItemCount()I", at = @At("HEAD"), cancellable = true)
     private void onGetMaxItemCount(CallbackInfoReturnable<Integer> cir) {
         try {
             Slot self = (Slot) (Object) this;
             ItemStack currentStack = self.getStack();
             int effectiveMax = StackContext.getEffectiveMaxStackSize(currentStack, this.inventory);
-
-            DebugLogger.debug("SlotMixin.getMaxItemCount(): item=%s, inventory=%s, isPlayerInv=%b, maxStack=%d",
-                    currentStack.isEmpty() ? "EMPTY" : currentStack.getItem().toString(),
-                    this.inventory.getClass().getSimpleName(),
-                    StackContext.isPlayerInventory(this.inventory),
-                    effectiveMax);
-
             cir.setReturnValue(effectiveMax);
         } catch (Exception e) {
             // Graceful degradation
         }
     }
 
+    // Called hundreds of times per tick - must be fast, no logging
     @Inject(method = "getMaxItemCount(Lnet/minecraft/item/ItemStack;)I",
             at = @At("HEAD"), cancellable = true)
     private void onGetMaxItemCountForStack(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
         try {
             int effectiveMax = StackContext.getEffectiveMaxStackSize(stack, this.inventory);
-
-            DebugLogger.debug("SlotMixin.getMaxItemCount(stack): item=%s, inventory=%s, isPlayerInv=%b, maxStack=%d",
-                    stack.isEmpty() ? "EMPTY" : stack.getItem().toString(),
-                    this.inventory.getClass().getSimpleName(),
-                    StackContext.isPlayerInventory(this.inventory),
-                    effectiveMax);
-
             cir.setReturnValue(effectiveMax);
         } catch (Exception e) {
             // Graceful degradation

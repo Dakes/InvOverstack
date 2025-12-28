@@ -27,6 +27,10 @@ import net.minecraft.util.Identifier;
  */
 public class StackContext {
 
+    // Performance cache: Item -> configured stack size (player inventory context only)
+    // Avoids repeated registry lookups and config checks for the same items
+    private static final java.util.Map<Item, Integer> STACK_SIZE_CACHE = new java.util.concurrent.ConcurrentHashMap<>();
+
     /**
      * Determines if the given inventory is a player inventory.
      * <p>
@@ -59,70 +63,51 @@ public class StackContext {
      */
     public static int getEffectiveMaxStackSize(ItemStack stack, Inventory inventory) {
         if (stack == null || stack.isEmpty()) {
-            return 64; // Default vanilla stack size
+            return 64;
         }
 
         Item item = stack.getItem();
         int vanillaMax = item.getMaxCount();
 
-        // Get item identifier for config lookup
-        Identifier itemId = Registries.ITEM.getId(item);
-        String itemIdString = itemId.toString();
-
-        // Get configuration
-        ModConfig config = InvOverstackMod.getConfig();
-        if (config == null) {
-            // Config not loaded yet, return vanilla
+        // Check inventory context FIRST - containers always use vanilla max
+        if (inventory != null && !isPlayerInventory(inventory)) {
             return vanillaMax;
         }
 
-        // Check blacklist first - blacklisted items always use vanilla max
-        if (config.itemBlacklist.contains(itemIdString)) {
-            return vanillaMax;
-        }
-
-        // Check if item has durability (tools, armor, etc.)
-        // These should not stack beyond vanilla limits
+        // Check if item has durability - these never stack beyond vanilla
         if (stack.isDamageable()) {
             return vanillaMax;
         }
 
-        // If we have an inventory context, check if it's a player inventory
-        if (inventory != null) {
-            boolean isPlayerInv = isPlayerInventory(inventory);
-            DebugLogger.debug("[StackContext] getEffectiveMaxStackSize: item=%s, inventory=%s, isPlayerInv=%b",
-                    itemIdString, inventory.getClass().getSimpleName(), isPlayerInv);
-
-            if (isPlayerInv) {
-                // Player inventory - use configured stack size
-                int configuredSize = config.getStackSizeForItem(itemIdString);
-
-                // If getStackSizeForItem returns -1, item is blacklisted
-                if (configuredSize == -1) {
-                    return vanillaMax;
-                }
-
-                DebugLogger.debug("[StackContext]   -> Returning configured size: %d", configuredSize);
-                return configuredSize;
-            } else {
-                // Container inventory - use vanilla max
-                DebugLogger.debug("[StackContext]   -> Returning vanilla max (container): %d", vanillaMax);
-                return vanillaMax;
-            }
+        // Check cache to avoid repeated registry/config lookups
+        Integer cached = STACK_SIZE_CACHE.get(item);
+        if (cached != null) {
+            return cached;
         }
 
-        // No inventory context - assume player inventory for item pickup, crafting, etc.
-        // HopperTransferMixin ensures hoppers provide inventory context
-        // ShulkerBoxInventoryMixin ensures shulker boxes report correct max
-        DebugLogger.debug("[StackContext] getEffectiveMaxStackSize: item=%s, inventory=NULL (assuming player context)", itemIdString);
-
-        int configuredSize = config.getStackSizeForItem(itemIdString);
-        if (configuredSize == -1) {
+        // Cache miss - do the expensive lookup once and cache it
+        ModConfig config = InvOverstackMod.getConfig();
+        if (config == null) {
             return vanillaMax;
         }
 
-        DebugLogger.debug("[StackContext]   -> Returning configured size (no context): %d", configuredSize);
-        return configuredSize;
+        // Registry lookup and string conversion
+        Identifier itemId = Registries.ITEM.getId(item);
+        String itemIdString = itemId.toString();
+
+        // Check blacklist
+        if (config.itemBlacklist.contains(itemIdString)) {
+            STACK_SIZE_CACHE.put(item, vanillaMax);
+            return vanillaMax;
+        }
+
+        // Get configured stack size
+        int configuredSize = config.getStackSizeForItem(itemIdString);
+        int result = (configuredSize == -1) ? vanillaMax : configuredSize;
+
+        // Cache the result for future calls
+        STACK_SIZE_CACHE.put(item, result);
+        return result;
     }
 
     /**
